@@ -1,0 +1,69 @@
+---
+title: "trees"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    source_code: embed
+    theme: flatly
+---
+
+```{r cars, include=FALSE}
+library(tidymodels)
+library(vip)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+library(GGally)
+library(tidyr)
+# Analysis
+library(corrr)
+library(flexdashboard)
+library(DT)
+
+#load data
+
+
+#overview of data
+pine_beetles_dat <-readxl::read_excel("~/Downloads/data_science_2/project_1/Data_1993.xlsx")
+
+```
+
+Column {.tabset}
+-------------------------------------
+
+### Histogram
+
+```{r pressure, echo=FALSE}
+#graph of killed trees over dead distance
+pine_beetles_dat$Response<- as.factor(pine_beetles_dat$Response)
+pine_beetles_dat  %>% 
+  ggplot( aes(x=DeadDist, fill=Response)) +
+  geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity') +
+  scale_fill_manual(values=c("#69b3a2", "#404080")) +
+  theme_ipsum() +
+  labs(fill="")
+```
+### Correlation Matrix
+
+```{r}
+pine_beetles_cor <- pine_beetles_dat %>% 
+  correlate() 
+
+pine_beetles_cor %>% 
+  rearrange() %>% 
+  fashion() %>% 
+  knitr::kable()
+```
+
+-------------------------------------------------------------------------------------
+### Descriptive Table
+
+```{r}
+DT::datatable(pine_beetles_dat, options = list(
+  bPaginate = FALSE
+))
+```
+
